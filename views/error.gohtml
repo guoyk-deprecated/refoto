@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {{template "shared/_head"}}
+</head>
+<body>
+<div class="container">
+    <div class="row" style="margin-top: 10rem;">
+        <div class="col-md-12 text-center">
+            <h3><i class="fa fa-exclamation-triangle"></i> 发生错误：{{.Message}}</h3>
+            <h3>正在跳转上一页面 <span id="span-count-down">5</span></h3>
+        </div>
+    </div>
+</div>
+{{template "shared/_foot"}}
+
+<script>
+    (function () {
+        $(function () {
+            var countDown = 5;
+            setInterval(function () {
+                countDown--;
+                if (countDown > 0) {
+                    $("#span-count-down").text(String(countDown));
+                } else if (countDown === 0) {
+                    window.history.back();
+                    $("#span-count-down").text("...");
+                }
+            }, 1000)
+        });
+    })();
+</script>
+</body>
+</html>
