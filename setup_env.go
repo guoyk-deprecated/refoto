@@ -1,12 +1,17 @@
 package main
 
 var (
-	envPort       = 4000
-	envTitle      = "Refoto"
-	envDebug      = false
-	envMySQLDSN   = ""
-	envAdminToken = ""
-	envSecret     = ""
+	envPort               = 4000
+	envTitle              = "Refoto"
+	envDebug              = false
+	envMySQLDSN           = ""
+	envAdminToken         = ""
+	envSecret             = ""
+	envOSSBucket          = ""
+	envOSSEndpoint        = ""
+	envOSSAccessKeyID     = ""
+	envOSSAccessKeySecret = ""
+	envOSSPublicEndpoint  = ""
 )
 
 func setupEnv() (err error) {
@@ -26,6 +31,21 @@ func setupEnv() (err error) {
 		return
 	}
 	if err = envStr("REFOTO_ADMIN_TOKEN", &envAdminToken); err != nil {
+		return
+	}
+	if err = envStr("REFOTO_OSS_BUCKET", &envOSSBucket); err != nil {
+		return
+	}
+	if err = envStr("REFOTO_OSS_ENDPOINT", &envOSSEndpoint); err != nil {
+		return
+	}
+	if err = envStr("REFOTO_OSS_AK_ID", &envOSSAccessKeyID); err != nil {
+		return
+	}
+	if err = envStr("REFOTO_OSS_AK_SECRET", &envOSSAccessKeySecret); err != nil {
+		return
+	}
+	if err = envStr("REFOTO_OSS_PUBLIC_ENDPOINT", &envOSSPublicEndpoint); err != nil {
 		return
 	}
 	return

@@ -20,18 +20,29 @@ type Event struct {
 
 type Girl struct {
 	gorm.Model
-	EventID   uint `gorm:"index"`
-	AvatarURL string
-	Token     string
-	Photos    []Photo `gorm:"foreignKey:GirlID"`
+	EventID    uint `gorm:"index"`
+	AvatarPath string
+	Token      string
+	Photos     []Photo `gorm:"foreignKey:GirlID"`
+}
+
+func (g Girl) AvatarURL() string {
+	return ossCombineURL(g.AvatarPath, ossSuffixAvatar)
 }
 
 type Photo struct {
 	gorm.Model
-	GirlID      uint   `gorm:"index"`
-	Kind        string `gorm:"index"`
-	URL         string
-	DownloadURL string
+	GirlID uint   `gorm:"index"`
+	Kind   string `gorm:"index"`
+	Path   string
+}
+
+func (g Girl) PreviewURL() string {
+	return ossCombineURL(g.AvatarPath, ossSuffixPreview)
+}
+
+func (g Girl) URL() string {
+	return ossCombineURL(g.AvatarPath, "")
 }
 
 func setupDB() (db *gorm.DB, err error) {

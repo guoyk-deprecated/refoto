@@ -2,12 +2,16 @@ package main
 
 import (
 	"errors"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
+	"mime/multipart"
 	"net/http"
+	"sort"
+	"strconv"
 )
 
 func sessionIsAdmin(ctx echo.Context) bool {
@@ -38,7 +42,7 @@ func requireAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func setupRoutes(e *echo.Echo, db *gorm.DB) {
+func setupRoutes(e *echo.Echo, db *gorm.DB, bucket *oss.Bucket) {
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte(envSecret))))
 	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{TokenLookup: "form:_csrf"}))
 	e.GET("/", func(ctx echo.Context) error {
@@ -55,7 +59,13 @@ func setupRoutes(e *echo.Echo, db *gorm.DB) {
 		if err := db.Preload("Girls").Order("id DESC").Find(&data.Events).Error; err != nil {
 			return err
 		}
-		//AvatarURL: "https://via.placeholder.com/150",
+		for i := range data.Events {
+			e := &data.Events[i]
+			sort.Slice(e.Girls, func(i, j int) bool {
+				return e.Girls[i].ID < e.Girls[j].ID
+			})
+		}
+		//AvatarPath: "https://via.placeholder.com/150",
 		return ctx.Render(http.StatusOK, "index", data)
 	})
 	e.GET("/admin/sign_in/:admin_token", func(ctx echo.Context) error {
@@ -75,7 +85,27 @@ func setupRoutes(e *echo.Echo, db *gorm.DB) {
 		return ctx.Redirect(http.StatusSeeOther, "/")
 	}, requireAdmin)
 	e.POST("/girls", func(ctx echo.Context) error {
-		//TODO: create girl with avatar
+		var err error
+		var header *multipart.FileHeader
+		if header, err = ctx.FormFile("avatar"); err != nil {
+			return err
+		}
+		var file multipart.File
+		if file, err = header.Open(); err != nil {
+			return err
+		}
+		defer file.Close()
+		var eventID int
+		if eventID, err = strconv.Atoi(ctx.FormValue("event_id")); err != nil {
+			return err
+		}
+		var relPath string
+		if relPath, err = ossUploadFile(bucket, header.Filename, file); err != nil {
+			return err
+		}
+		if err = db.Create(&Girl{EventID: uint(eventID), AvatarPath: relPath}).Error; err != nil {
+			return err
+		}
 		return ctx.Redirect(http.StatusSeeOther, "/")
 	})
 }

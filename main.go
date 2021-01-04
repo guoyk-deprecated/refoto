@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
@@ -31,6 +32,11 @@ func main() {
 		return
 	}
 
+	var bucket *oss.Bucket
+	if bucket, err = setupOSS(); err != nil {
+		return
+	}
+
 	var r *TemplateEngine
 	if r, err = NewTemplateEngine(TemplateEngineOptions{
 		Debug: envDebug,
@@ -49,7 +55,7 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 
-	setupRoutes(e, db)
+	setupRoutes(e, db, bucket)
 
 	err = e.Start(fmt.Sprintf(":%d", envPort))
 }
