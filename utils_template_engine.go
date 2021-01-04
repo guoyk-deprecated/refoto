@@ -24,7 +24,7 @@ type TemplateEngine struct {
 	t    *template.Template
 }
 
-func (t *TemplateEngine) ErrorHandler(name string) echo.HTTPErrorHandler {
+func (t *TemplateEngine) ErrorHandler(name string, title string) echo.HTTPErrorHandler {
 	return func(err error, c echo.Context) {
 		code := http.StatusInternalServerError
 		message := err.Error()
@@ -46,7 +46,7 @@ func (t *TemplateEngine) ErrorHandler(name string) echo.HTTPErrorHandler {
 			if c.Request().Method == http.MethodHead {
 				err = c.NoContent(code)
 			} else {
-				err = c.Render(code, name, echo.Map{"Message": message})
+				err = c.Render(code, name, echo.Map{"Message": message, "Title": title})
 			}
 			if err != nil {
 				c.Echo().Logger.Error(err)

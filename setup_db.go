@@ -1,6 +1,10 @@
 package main
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
 
 const (
 	PhotoKindOriginal   = "ORIGINAL"
@@ -10,7 +14,7 @@ const (
 
 type Event struct {
 	gorm.Model
-	Name  string `gorm:""`
+	Name  string
 	Girls []Girl `gorm:"foreignKey:EventID"`
 }
 
@@ -28,4 +32,17 @@ type Photo struct {
 	Kind        string `gorm:"index"`
 	URL         string
 	DownloadURL string
+}
+
+func setupDB() (db *gorm.DB, err error) {
+	if db, err = gorm.Open(mysql.Open(envMySQLDSN), &gorm.Config{}); err != nil {
+		return
+	}
+	if envDebug {
+		db.Logger = db.Logger.LogMode(logger.Info)
+	}
+	if err = db.AutoMigrate(&Event{}, &Girl{}, &Photo{}); err != nil {
+		return
+	}
+	return
 }
