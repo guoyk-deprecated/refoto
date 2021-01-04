@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {{template "shared/_head"}}
+</head>
+<body>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2 class="text-secondary"><i class="fa fa-camera-retro"></i> {{.Title}}</h2>
+            <hr/>
+        </div>
+    </div>
+    {{range .Events}}
+        <div class="row mt-3">
+            <div class="col-md-12 mb-3">
+                <h4 class="text-primary"><i class="fa fa-bullhorn"></i> {{.Name}}</h4>
+            </div>
+            {{range .Girls}}
+                <div class="col-6 col-sm-6 col-md-3 col-lg-2 mb-2">
+                    <a href="/girls/{{.ID}}">
+                        <img alt="Girl {{.ID}}" class="img-thumbnail" src="{{.AvatarURL}}"/>
+                    </a>
+                </div>
+            {{end}}
+        </div>
+    {{end}}
+    <div class="row mt-5 mb-3">
+        <div class="col-md-12 text-center">
+            <p class="text-muted">--- 没有更多内容了 ---</p>
+        </div>
+    </div>
+</div>
+{{template "shared/_foot"}}
+</body>
+</html>
