@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/sessions"
-	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
@@ -49,7 +47,7 @@ func main() {
 	e.Renderer = r
 	e.HTTPErrorHandler = r.ErrorHandler("error", envTitle)
 	e.Use(middleware.Recover())
-	e.Use(session.Middleware(sessions.NewCookieStore([]byte(envSecret))))
+	e.Use(middleware.Logger())
 
 	setupRoutes(e, db)
 

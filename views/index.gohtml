@@ -12,11 +12,50 @@
             <hr/>
         </div>
     </div>
+    {{if .IsAdmin}}
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/events" method="post">
+                            <input type="hidden" name="_csrf" value="{{.CSRF}}"/>
+                            <div class="form-group">
+                                <label for="input-name">名称</label>
+                                <input type="text" class="form-control" id="input-name" name="name"/>
+                                <small id="help-input-name" class="form-text text-muted">输入活动名称</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> 添加活动</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{end}}
     {{range .Events}}
         <div class="row mt-3">
             <div class="col-md-12 mb-3">
                 <h4 class="text-primary"><i class="fa fa-bullhorn"></i> {{.Name}}</h4>
             </div>
+            {{if $.IsAdmin}}
+                <div class="col-12 col-sm-12 col-md-6 col-lg-4 mb-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="/girls" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="_csrf" value="{{$.CSRF}}"/>
+                                <input type="hidden" name="event_id" value="{{.ID}}"/>
+                                <div class="form-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="input-girl-avatar"
+                                               name="avatar">
+                                        <label class="custom-file-label" for="input-girl-avatar">选择 150x150 的头像</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> 添加妹子</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {{end}}
             {{range .Girls}}
                 <div class="col-6 col-sm-6 col-md-3 col-lg-2 mb-2">
                     <a href="/girls/{{.ID}}">
