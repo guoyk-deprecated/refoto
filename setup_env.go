@@ -1,7 +1,6 @@
 package main
 
 var (
-	envPort               = 4000
 	envTitle              = "Refoto"
 	envContact            = ""
 	envDebug              = false
@@ -16,9 +15,6 @@ var (
 )
 
 func setupEnv() (err error) {
-	if err = envInt("REFOTO_PORT", &envPort); err != nil {
-		return
-	}
 	if err = envStr("REFOTO_TITLE", &envTitle); err != nil {
 		return
 	}

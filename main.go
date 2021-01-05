@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -61,5 +60,5 @@ func main() {
 
 	setupRoutes(e, db, bucket)
 
-	err = e.Start(fmt.Sprintf(":%d", envPort))
+	err = e.Start(":4000")
 }
