@@ -6,9 +6,46 @@
 </head>
 <body>
 <div class="container">
-    <div class="row mt-4">
+    <div class="modal fade" id="modal-input-token" tabindex="-1" role="dialog" aria-labelledby="modal-input-token-label"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-input-token-label"><i style="width: 1rem;" class="fa fa-lock"></i>
+                        输入密码</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mt-2">
+                        <div class="col-md-8 offset-md-2 text-center">
+                            <h5><i style="width: 2.4rem;" class="fa fa-keyboard-o"></i> 输入密码</h5>
+                            <input type="text" class="form-control text-center mt-3" id="input-token" min="0" max="9">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <p>如果不知道密码，请<b>本人</b> <a href="{{.Contact}}" target="_blank">联系我 <i
+                                            class="fa fa-arrow-circle-right"></i> </a> 获取</p>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-md-12 text-center">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button id="modal-btn-ok" type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
         <div class="col-md-12">
-            <h2 class="text-primary"><a href="/"><i style="width: 2rem;" class="fa fa-arrow-left"></i> {{.Title}}</a></h2>
+            <h3 class="text-primary"><a href="/"><i style="width: 2.4rem;" class="fa fa-arrow-left"></i> {{.Title}}</a>
+            </h3>
         </div>
     </div>
     <div class="row mt-4">
@@ -18,8 +55,8 @@
                     <div class="media">
                         <img alt="Girl {{.Girl.ID}}" class="mr-3 img-thumbnail" src="{{.Girl.AvatarURL}}"/>
                         <div class="media-body">
-                            <h4 class="text-muted"><small>拍摄于</small></h4>
-                            <h3><i class="fa fa-bullhorn"></i> <b>{{.Event.Name}}</b></h3>
+                            <h5 class="text-muted"><small>拍摄于</small></h5>
+                            <h4><b>{{.Event.Name}}</b></h4>
                             {{if .IsAdmin}}
                                 <h5>密码: <b>{{.Girl.Token}}</b></h5>
                             {{end}}
@@ -31,9 +68,10 @@
                             {{end}}
                             {{if .TokenMatched}}
                             {{else}}
-                                <div style="position: absolute; right: 1rem; bottom: 1rem;">
-                                    <button id="btn-show-photos" type="button" class="btn btn-lg btn-primary my-1"><i
-                                                class="fa fa-image"></i> 查看返图
+                                <div class="mr-2">
+                                    <button data-toggle="modal" data-target="#modal-input-token" id="btn-show-photos"
+                                            type="button" class="pull-right btn btn-lg btn-primary my-1"><i
+                                                class="fa fa-image" style="width: 2rem;"></i> 查看返图
                                     </button>
                                 </div>
                             {{end}}
@@ -43,18 +81,30 @@
             </div>
         </div>
         <div class="col-md-12 mt-4">
-            <h3><i class="fa fa-tint" style="width: 24px"></i> 粗修 ({{len .PhotosRoughTuned}} 张)</h3>
+            <h4><i class="fa fa-tint" style="width: 24px"></i> 粗修 ({{len .PhotosRoughTuned}} 张)</h4>
         </div>
         {{if .TokenMatched}}
+            {{if .PhotosRoughTuned}}
+            {{else}}
+                <div class="col-md-12 mt-4 mb-4 text-center">
+                    <h5 class="text-muted">--- 没有内容 ---</h5>
+                </div>
+            {{end}}
         {{else}}
             <div class="col-md-12 mt-4 mb-4 text-center">
                 <h5 class="text-muted">--- 已隐藏 ---</h5>
             </div>
         {{end}}
         <div class="col-md-12 mt-4">
-            <h3><i class="fa fa-file-image-o" style="width: 24px"></i> 原图 ({{len .PhotosOriginal}} 张)</h3>
+            <h4><i class="fa fa-file-image-o" style="width: 24px"></i> 原图 ({{len .PhotosOriginal}} 张)</h4>
         </div>
         {{if .TokenMatched}}
+            {{if .PhotosOriginal}}
+            {{else}}
+                <div class="col-md-12 mt-4 mb-4 text-center">
+                    <h5 class="text-muted">--- 没有内容 ---</h5>
+                </div>
+            {{end}}
         {{else}}
             <div class="col-md-12 mt-4 mb-4 text-center">
                 <h5 class="text-muted">--- 已隐藏 ---</h5>
@@ -64,5 +114,11 @@
     <div class="row mt-5 mb-3"></div>
 </div>
 {{template "shared/_foot"}}
+<script>
+    $("#modal-btn-ok").click(function (e) {
+        e.preventDefault();
+        window.location = window.location.pathname + "?token=" + encodeURI($("#input-token").val())
+    });
+</script>
 </body>
 </html>

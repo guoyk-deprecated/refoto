@@ -76,6 +76,7 @@ func setupRoutes(e *echo.Echo, db *gorm.DB, bucket *oss.Bucket) {
 			IsAdmin          bool
 			TokenExisted     bool
 			TokenMatched     bool
+			Contact          string
 			CSRF             string
 			Girl             Girl
 			Event            Event
@@ -85,6 +86,7 @@ func setupRoutes(e *echo.Echo, db *gorm.DB, bucket *oss.Bucket) {
 		}
 		var data Data
 		data.CSRF, _ = ctx.Get("csrf").(string)
+		data.Contact = envContact
 		data.IsAdmin = sessionIsAdmin(ctx)
 		data.Title = envTitle
 		if err := db.Preload("Photos").Find(&data.Girl, ctx.Param("girl_id")).Error; err != nil {
@@ -139,7 +141,7 @@ func setupRoutes(e *echo.Echo, db *gorm.DB, bucket *oss.Bucket) {
 		if err = db.Create(&Girl{
 			EventID:    uint(eventID),
 			AvatarPath: relPath,
-			Token:      fmt.Sprintf("%06d", 1+rand.Intn(999999)),
+			Token:      fmt.Sprintf("%08d", 1+rand.Intn(99999999)),
 		}).Error; err != nil {
 			return err
 		}

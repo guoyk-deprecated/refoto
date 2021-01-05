@@ -3,6 +3,7 @@ package main
 var (
 	envPort               = 4000
 	envTitle              = "Refoto"
+	envContact            = ""
 	envDebug              = false
 	envMySQLDSN           = ""
 	envAdminToken         = ""
@@ -19,6 +20,9 @@ func setupEnv() (err error) {
 		return
 	}
 	if err = envStr("REFOTO_TITLE", &envTitle); err != nil {
+		return
+	}
+	if err = envStr("REFOTO_CONTACT", &envContact); err != nil {
 		return
 	}
 	if err = envBool("REFOTO_DEBUG", &envDebug); err != nil {

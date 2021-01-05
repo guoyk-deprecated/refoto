@@ -7,7 +7,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 	"log"
+	"math/rand"
 	"os"
+	"time"
 )
 
 func main() {
@@ -20,6 +22,8 @@ func main() {
 			log.Println("exited")
 		}
 	}(&err)
+
+	rand.Seed(time.Now().Unix())
 
 	log.SetOutput(os.Stdout)
 
