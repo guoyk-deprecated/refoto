@@ -147,4 +147,34 @@ func setupRoutes(e *echo.Echo, db *gorm.DB, bucket *oss.Bucket) {
 		}
 		return ctx.Redirect(http.StatusSeeOther, "/")
 	})
+	e.POST("/photos", func(ctx echo.Context) error {
+		girlIDStr := ctx.FormValue("girl_id")
+		var err error
+		var girlId int
+		if girlId, err = strconv.Atoi(girlIDStr); err != nil {
+			return err
+		}
+		var header *multipart.FileHeader
+		if header, err = ctx.FormFile("file"); err != nil {
+			return err
+		}
+		var file multipart.File
+		if file, err = header.Open(); err != nil {
+			return err
+		}
+		defer file.Close()
+		var relPath string
+		if relPath, err = ossUploadFile(bucket, header.Filename, file); err != nil {
+			return err
+		}
+		if err = db.Create(&Photo{
+			GirlID: uint(girlId),
+			Kind:   ctx.FormValue("kind"),
+			Path:   relPath,
+			Size:   header.Size,
+		}).Error; err != nil {
+			return err
+		}
+		return ctx.Redirect(http.StatusSeeOther, fmt.Sprintf("/girls/%d", girlId))
+	})
 }

@@ -8,8 +8,8 @@ import (
 
 const (
 	PhotoKindOriginal   = "ORIGINAL"
-	PhotoKindRoughTuned = "ROUGH"
-	PhotoKindFineTuned  = "FINE"
+	PhotoKindRoughTuned = "ROUGH_TUNED"
+	PhotoKindFineTuned  = "FINE_TUNED"
 )
 
 type Event struct {
@@ -47,12 +47,12 @@ type Photo struct {
 	Size   int64 `gorm:"index"`
 }
 
-func (g Girl) PreviewURL() string {
-	return ossCombineURL(g.AvatarPath, ossSuffixPreview)
+func (f Photo) PreviewURL() string {
+	return ossCombineURL(f.Path, ossSuffixPreview)
 }
 
-func (g Girl) URL() string {
-	return ossCombineURL(g.AvatarPath, "")
+func (f Photo) URL() string {
+	return ossCombineURL(f.Path, "")
 }
 
 func setupDB() (db *gorm.DB, err error) {

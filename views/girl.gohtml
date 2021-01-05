@@ -19,14 +19,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="row mt-2">
-                        <div class="col-md-8 offset-md-2 text-center">
-                            <h5><i style="width: 2.4rem;" class="fa fa-keyboard-o"></i> 输入密码</h5>
-                            <input type="text" class="form-control text-center mt-3" id="input-token" min="0" max="9">
+                        <div class="col-10 col-md-8 offset-1 offset-md-2 text-center">
+                            <h5>输入密码</h5>
+                            <input type="text" style="font-size: 1.4rem;" class="form-control text-center mt-3"
+                                   id="input-token" min="0" max="9">
                         </div>
                     </div>
                     <div class="row mt-3">
                         <div class="col-md-12 text-center">
-                            <p>如果不知道密码，请<b>本人</b> <a href="{{.Contact}}" target="_blank">联系我 <i
+                            <p>如果不知道密码，请<b>模特本人</b> <a href="{{.Contact}}" target="_blank">联系我 <i
                                             class="fa fa-arrow-circle-right"></i> </a> 获取</p>
                         </div>
                     </div>
@@ -80,11 +81,41 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12 mt-4">
+
+        <div class="col-md-12 mt-4 mb-2">
             <h4><i class="fa fa-tint" style="width: 24px"></i> 粗修 ({{len .PhotosRoughTuned}} 张)</h4>
         </div>
-        {{if .TokenMatched}}
+        {{if .IsAdmin}}
+            <div class="col-md-4 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/photos" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="{{.CSRF}}"/>
+                            <input type="hidden" name="girl_id" value="{{.Girl.ID}}"/>
+                            <input type="hidden" name="kind" value="ROUGH_TUNED">
+                            <div class="form-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="input-photo-file"
+                                           name="file">
+                                    <label class="custom-file-label" for="input-photo-file">选择返图</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> 添加返图</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {{end}}
+        {{if or .TokenMatched .IsAdmin}}
             {{if .PhotosRoughTuned}}
+                {{range .PhotosRoughTuned}}
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-4 mb-2 text-center">
+                        <a href="{{.URL}}" target="_blank">
+                            <img alt="Photo {{.ID}}" class="img-thumbnail" src="{{.PreviewURL}}"/>
+                        </a>
+                        <label class="mt-1">文件大小：{{bytesize .Size}}</label>
+                    </div>
+                {{end}}
             {{else}}
                 <div class="col-md-12 mt-4 mb-4 text-center">
                     <h5 class="text-muted">--- 没有内容 ---</h5>
@@ -95,11 +126,40 @@
                 <h5 class="text-muted">--- 已隐藏 ---</h5>
             </div>
         {{end}}
-        <div class="col-md-12 mt-4">
+        <div class="col-md-12 mt-4 mb-2">
             <h4><i class="fa fa-file-image-o" style="width: 24px"></i> 原图 ({{len .PhotosOriginal}} 张)</h4>
         </div>
-        {{if .TokenMatched}}
+        {{if .IsAdmin}}
+            <div class="col-md-4 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/photos" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="{{.CSRF}}"/>
+                            <input type="hidden" name="girl_id" value="{{.Girl.ID}}"/>
+                            <input type="hidden" name="kind" value="ORIGINAL">
+                            <div class="form-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="input-photo-file"
+                                           name="file">
+                                    <label class="custom-file-label" for="input-photo-file">选择返图</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> 添加返图</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {{end}}
+        {{if or .TokenMatched .IsAdmin}}
             {{if .PhotosOriginal}}
+                {{range .PhotosOriginal}}
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-4 mb-2 text-center">
+                        <a href="{{.URL}}" target="_blank">
+                            <img alt="Photo {{.ID}}" class="img-thumbnail" src="{{.PreviewURL}}"/>
+                        </a>
+                        <label class="mt-1">文件大小：{{bytesize .Size}}</label>
+                    </div>
+                {{end}}
             {{else}}
                 <div class="col-md-12 mt-4 mb-4 text-center">
                     <h5 class="text-muted">--- 没有内容 ---</h5>

@@ -65,7 +65,17 @@ func (t *TemplateEngine) Render(w io.Writer, name string, data interface{}, c ec
 }
 
 func (t *TemplateEngine) Reload() (err error) {
-	newT := template.New("__root__")
+	newT := template.New("__root__").Funcs(template.FuncMap{
+		"bytesize": func(size int64) string {
+			if size > 1000000 {
+				return fmt.Sprintf("%.2fmb", float64(size)/float64(1000000))
+			} else if size > 1000 {
+				return fmt.Sprintf("%.2fkb", float64(size)/float64(1000))
+			} else {
+				return fmt.Sprintf("%db", size)
+			}
+		},
+	})
 	if err = filepath.Walk(t.opts.Dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
