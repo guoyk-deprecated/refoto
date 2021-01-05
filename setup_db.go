@@ -30,11 +30,21 @@ func (g Girl) AvatarURL() string {
 	return ossCombineURL(g.AvatarPath, ossSuffixAvatar)
 }
 
+func (g Girl) PhotosWithKind(kind string) (output []Photo) {
+	for _, p := range g.Photos {
+		if p.Kind == kind {
+			output = append(output, p)
+		}
+	}
+	return
+}
+
 type Photo struct {
 	gorm.Model
 	GirlID uint   `gorm:"index"`
 	Kind   string `gorm:"index"`
 	Path   string
+	Size   int64 `gorm:"index"`
 }
 
 func (g Girl) PreviewURL() string {

@@ -2,12 +2,14 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"sort"
@@ -68,6 +70,37 @@ func setupRoutes(e *echo.Echo, db *gorm.DB, bucket *oss.Bucket) {
 		//AvatarPath: "https://via.placeholder.com/150",
 		return ctx.Render(http.StatusOK, "index", data)
 	})
+	e.GET("/girls/:girl_id", func(ctx echo.Context) error {
+		type Data struct {
+			Title            string
+			IsAdmin          bool
+			TokenExisted     bool
+			TokenMatched     bool
+			CSRF             string
+			Girl             Girl
+			Event            Event
+			PhotosOriginal   []Photo
+			PhotosRoughTuned []Photo
+			PhotosFineTuned  []Photo
+		}
+		var data Data
+		data.CSRF, _ = ctx.Get("csrf").(string)
+		data.IsAdmin = sessionIsAdmin(ctx)
+		data.Title = envTitle
+		if err := db.Preload("Photos").Find(&data.Girl, ctx.Param("girl_id")).Error; err != nil {
+			return err
+		}
+		token := ctx.QueryParam("token")
+		data.TokenExisted = token != ""
+		data.TokenMatched = token == data.Girl.Token
+		data.PhotosFineTuned = data.Girl.PhotosWithKind(PhotoKindFineTuned)
+		data.PhotosRoughTuned = data.Girl.PhotosWithKind(PhotoKindRoughTuned)
+		data.PhotosOriginal = data.Girl.PhotosWithKind(PhotoKindOriginal)
+		if err := db.Find(&data.Event, data.Girl.EventID).Error; err != nil {
+			return err
+		}
+		return ctx.Render(http.StatusOK, "girl", data)
+	})
 	e.GET("/admin/sign_in/:admin_token", func(ctx echo.Context) error {
 		if ctx.Param("admin_token") == envAdminToken {
 			sessionSetAdmin(ctx, true)
@@ -103,7 +136,11 @@ func setupRoutes(e *echo.Echo, db *gorm.DB, bucket *oss.Bucket) {
 		if relPath, err = ossUploadFile(bucket, header.Filename, file); err != nil {
 			return err
 		}
-		if err = db.Create(&Girl{EventID: uint(eventID), AvatarPath: relPath}).Error; err != nil {
+		if err = db.Create(&Girl{
+			EventID:    uint(eventID),
+			AvatarPath: relPath,
+			Token:      fmt.Sprintf("%06d", 1+rand.Intn(999999)),
+		}).Error; err != nil {
 			return err
 		}
 		return ctx.Redirect(http.StatusSeeOther, "/")

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}{{if .IsAdmin}} [Admin]{{end}}</title>
+    {{template "shared/_head"}}
+</head>
+<body>
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h2 class="text-primary"><a href="/"><i style="width: 2rem;" class="fa fa-arrow-left"></i> {{.Title}}</a></h2>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="media">
+                        <img alt="Girl {{.Girl.ID}}" class="mr-3 img-thumbnail" src="{{.Girl.AvatarURL}}"/>
+                        <div class="media-body">
+                            <h4 class="text-muted"><small>拍摄于</small></h4>
+                            <h3><i class="fa fa-bullhorn"></i> <b>{{.Event.Name}}</b></h3>
+                            {{if .IsAdmin}}
+                                <h5>密码: <b>{{.Girl.Token}}</b></h5>
+                            {{end}}
+                            {{if .TokenExisted}}
+                                {{if .TokenMatched}}
+                                {{else}}
+                                    <h5 class="text-danger"><i class="fa fa-exclamation-triangle"></i> 密码错误</h5>
+                                {{end}}
+                            {{end}}
+                            {{if .TokenMatched}}
+                            {{else}}
+                                <div style="position: absolute; right: 1rem; bottom: 1rem;">
+                                    <button id="btn-show-photos" type="button" class="btn btn-lg btn-primary my-1"><i
+                                                class="fa fa-image"></i> 查看返图
+                                    </button>
+                                </div>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mt-4">
+            <h3><i class="fa fa-tint" style="width: 24px"></i> 粗修 ({{len .PhotosRoughTuned}} 张)</h3>
+        </div>
+        {{if .TokenMatched}}
+        {{else}}
+            <div class="col-md-12 mt-4 mb-4 text-center">
+                <h5 class="text-muted">--- 已隐藏 ---</h5>
+            </div>
+        {{end}}
+        <div class="col-md-12 mt-4">
+            <h3><i class="fa fa-file-image-o" style="width: 24px"></i> 原图 ({{len .PhotosOriginal}} 张)</h3>
+        </div>
+        {{if .TokenMatched}}
+        {{else}}
+            <div class="col-md-12 mt-4 mb-4 text-center">
+                <h5 class="text-muted">--- 已隐藏 ---</h5>
+            </div>
+        {{end}}
+    </div>
+    <div class="row mt-5 mb-3"></div>
+</div>
+{{template "shared/_foot"}}
+</body>
+</html>
