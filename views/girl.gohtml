@@ -20,7 +20,8 @@
                 <div class="modal-body">
                     <div class="row mt-2 mb-3">
                         <div class="col-10 col-md-8 offset-1 offset-md-2 text-center">
-                            <input type="text" placeholder="* * * * * *" style="font-size: 1.4rem;" class="form-control text-center mt-3"
+                            <input type="text" placeholder="* * * * * *" style="font-size: 1.4rem;"
+                                   class="form-control text-center mt-3"
                                    id="input-token" min="0" max="9">
                         </div>
                     </div>
@@ -77,9 +78,6 @@
             </div>
         </div>
 
-        <div class="col-md-12 mt-4 mb-2">
-            <h4><i class="fa fa-tint" style="width: 24px"></i> 粗修 ({{len .PhotosRoughTuned}} 张)</h4>
-        </div>
         {{if .IsAdmin}}
             <div class="col-md-4 mt-4">
                 <div class="card">
@@ -102,6 +100,9 @@
             </div>
         {{end}}
         {{if or .TokenMatched .IsAdmin}}
+            <div class="col-md-12 mt-4 mb-2">
+                <h4><i class="fa fa-tint" style="width: 24px"></i> 粗修 ({{len .PhotosRoughTuned}} 张)</h4>
+            </div>
             {{if .PhotosRoughTuned}}
                 {{range .PhotosRoughTuned}}
                     <div class="col-12 col-sm-12 col-md-6 col-lg-4 mb-2 text-center">
@@ -116,14 +117,8 @@
                     <h5 class="text-muted">--- 没有内容 ---</h5>
                 </div>
             {{end}}
-        {{else}}
-            <div class="col-md-12 mt-4 mb-4 text-center">
-                <h5 class="text-muted">--- 已隐藏 ---</h5>
-            </div>
         {{end}}
-        <div class="col-md-12 mt-4 mb-2">
-            <h4><i class="fa fa-file-image-o" style="width: 24px"></i> 原图 ({{len .PhotosOriginal}} 张)</h4>
-        </div>
+
         {{if .IsAdmin}}
             <div class="col-md-4 mt-4">
                 <div class="card">
@@ -146,6 +141,9 @@
             </div>
         {{end}}
         {{if or .TokenMatched .IsAdmin}}
+            <div class="col-md-12 mt-4 mb-2">
+                <h4><i class="fa fa-file-image-o" style="width: 24px"></i> 原图 ({{len .PhotosOriginal}} 张)</h4>
+            </div>
             {{if .PhotosOriginal}}
                 {{range .PhotosOriginal}}
                     <div class="col-12 col-sm-12 col-md-6 col-lg-4 mb-2 text-center">
@@ -160,10 +158,6 @@
                     <h5 class="text-muted">--- 没有内容 ---</h5>
                 </div>
             {{end}}
-        {{else}}
-            <div class="col-md-12 mt-4 mb-4 text-center">
-                <h5 class="text-muted">--- 已隐藏 ---</h5>
-            </div>
         {{end}}
     </div>
     <div class="row mt-5 mb-3"></div>
